@@ -1,0 +1,16 @@
+* { 
+	-moz-box-sizing: border-box; 
+	-webkit-box-sizing: border-box; 
+	box-sizing: border-box; 
+}
+
+.comment {
+	background: #efefef;
+	padding: 20px;
+	margin: 20px;
+	width: 300px;
+}
+
+.comment-footer {
+	font-size: .75rem;
+}
