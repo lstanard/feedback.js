@@ -20,11 +20,18 @@
 	height: 80px;
 }
 
+.comments-wrapper {
+	position: relative;
+}
+
 .comment {
+	float: left;
 	background: #efefef;
 	padding: 20px;
 	margin: 20px;
 	width: 300px;
+
+	/* position:  absolute; */
 }
 
 .comment-footer {
