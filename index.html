@@ -6,17 +6,23 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
     <script src="js/libs/jquery-1.10.1.min.js"></script>
-    <!--<script src="js/libs/handlebars.js"></script>
-    <script src="js/libs/ember-1.0.0-rc.4.js"></script>-->
     <script src="js/feedback.js"></script>
   </head>
   <body>
+
+    <form class="add-comment-form">
+      <p><strong>Add a new comment</strong></p>
+      <input type="text" id="add-comment-author">
+      <textarea id="add-comment-copy"></textarea>
+      <a href="#" id="add-comment-btn">Add comment</a>
+    </form>
   	
   	<article class="comment">
   	  <p class="comment-copy">This is a comment left by a user.</p>
   	  <footer class="comment-footer">
   	  	<p>Comment left by: <span class="comment-author">Charlie Stanard</span></p>
   	  </footer>
+      <a href="#" class="comment-delete">Delete comment</a>
   	</article>
   	
   	<article class="comment">
@@ -24,6 +30,7 @@
   	  <footer class="comment-footer">
   	  	<p>Comment left by: <span class="comment-author">Louis Stanard</span></p>
   	  </footer>
+      <a href="#" class="comment-delete">Delete comment</a>
   	</article>
     
   </body>

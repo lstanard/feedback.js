@@ -4,6 +4,22 @@
 	box-sizing: border-box; 
 }
 
+.add-comment-form {
+	padding: 20px;
+	margin: 20px;
+	width: 300px;
+}
+
+.add-comment-form input, 
+.add-comment-form textarea {
+	margin: 0 0 20px 0;
+	width: 260px;
+}
+
+.add-comment-form textarea {
+	height: 80px;
+}
+
 .comment {
 	background: #efefef;
 	padding: 20px;
@@ -12,5 +28,9 @@
 }
 
 .comment-footer {
+	font-size: .75rem;
+}
+
+.comment-delete {
 	font-size: .75rem;
 }
