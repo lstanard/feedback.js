@@ -110,15 +110,57 @@ function init() {
 
 }
 
+	
+
+	/* 
+
+	This does not work, inner functions are not publically available 
+
+	var feedback = function() {
+
+		this.methods = function() {
+
+			this.testMethod = function() {
+
+				console.log('hit');
+
+			}
+
+		}
+
+	}
+
+	*/
+
+	/*
+
+	This works as intended, but doesn't seem like the most elegant solution 
+
+		var feedback = function() {};
+		
+		feedback.methods = function() {}
+
+		feedback.methods.testMethod = function() {
+			console.log('hit');
+		}
+
+	*/
+
 $(document).ready(function(){
 
 	/* 
 
 		REFERENCE: 
 		----------
+		* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call
+		* http://stackoverflow.com/questions/6276175/adding-methods-to-custom-objects-in-javascript 
+
 		https://github.com/rwldrn/idiomatic.js/
 		http://stackoverflow.com/questions/3913103/javascript-object-literal-pattern-with-multiple-instances 
 		https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
+
+		http://stackoverflow.com/questions/310870/use-of-prototype-vs-this-in-javascript
+		http://stackoverflow.com/questions/13190097/whats-the-best-way-to-create-javascript-classes?lq=1
 
 	*/ 
 
