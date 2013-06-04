@@ -9,31 +9,16 @@
     <script src="js/feedback.js"></script>
   </head>
   <body>
-
-    <form class="add-comment-form">
-      <p><strong>Add a new comment</strong></p>
-      <input type="text" id="add-comment-author">
-      <textarea id="add-comment-copy"></textarea>
-      <a href="#" id="add-comment-btn">Add comment</a>
-    </form>
   	
     <div class="comments-wrapper">
 
-    	<article class="comment">
-    	  <p class="comment-copy">This is a comment left by a user.</p>
-    	  <footer class="comment-footer">
-    	  	<p>Comment left by: <span class="comment-author">Charlie Stanard</span></p>
-    	  </footer>
-        <a href="#" class="comment-delete">Delete comment</a>
-    	</article>
-    	
-    	<article class="comment">
-    	  <p class="comment-copy">This is another comment left by a user.</p>
-    	  <footer class="comment-footer">
-    	  	<p>Comment left by: <span class="comment-author">Louis Stanard</span></p>
-    	  </footer>
-        <a href="#" class="comment-delete">Delete comment</a>
-    	</article>
+      <form class="add-comment-form" style="display:none;">
+        <a href="#" class="add-comment-close">[X]</a>
+        <p><strong>Add a new comment</strong></p>
+        <input type="text" id="add-comment-author">
+        <textarea id="add-comment-copy"></textarea>
+        <a href="#" id="add-comment-btn">Add comment</a>
+      </form>
 
     </div>
     
