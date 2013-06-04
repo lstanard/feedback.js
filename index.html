@@ -7,10 +7,17 @@
     <link rel="stylesheet" href="css/style.css">
     <script src="js/libs/jquery-1.10.1.min.js"></script>
     <script src="js/feedback.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        feedback();
+      });
+    </script>
   </head>
   <body>
   	
     <div class="comments-wrapper">
+
+      <a href="#" id="create-comment-btn">Add a comment</a>
 
       <form class="add-comment-form" style="display:none;">
         <a href="#" class="add-comment-close">[X]</a>

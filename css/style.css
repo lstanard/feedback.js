@@ -4,6 +4,19 @@
 	box-sizing: border-box; 
 }
 
+#create-comment-btn {
+	display:  block;
+	background:  blue;
+	color: #FFF;
+	font-size:  14px;
+	text-decoration:  none;
+	width: 160px;
+	height: 32px;
+	padding: 6px 0 0 0;
+	text-align:  center;
+	margin: 20px;
+}
+
 .add-comment-form {
 	background:  #dedede;
 	padding: 20px;

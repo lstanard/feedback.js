@@ -1,42 +1,20 @@
-/* ------------------------------------------------
+	/* ------------------------------------------------
 
-	REFERENCE: 
-	----------
-	* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call
-	* http://stackoverflow.com/questions/6276175/adding-methods-to-custom-objects-in-javascript 
+		TO DO:
+		------
+		- Ability to write multi-line comments (currently outputs 1 string)
+		- Format date string to be more concise
+		- New comment positioning is off 
+		- Reduce unnecessary repetition in comment property variables 
 
-	http://stackoverflow.com/questions/572897/how-does-javascript-prototype-work
+	--------------------------------------------- */
 
-	https://github.com/rwldrn/idiomatic.js/
-	http://stackoverflow.com/questions/3913103/javascript-object-literal-pattern-with-multiple-instances 
-	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
-
-	http://stackoverflow.com/questions/310870/use-of-prototype-vs-this-in-javascript
-	http://stackoverflow.com/questions/13190097/whats-the-best-way-to-create-javascript-classes?lq=1
-
-   --------------------------------------------- */
-
-/* ------------------------------------------------
-
-	TO DO:
-
-	- Give comments an absolute position on the page
-	- Ability to create a new sticky by clicking on the page and capturing the mouse position on click
-	- Ability to write multi-line comments (currently outputs 1 string)
-	- Validate that form fields are not empty 
-
-   --------------------------------------------- */
-
-/*function init() {
-	feedback();
-}*/
 
 function feedback() {
 
 	function init() {
 
-		bind_click_to_body();
-		assign_handlers();
+		// Any initilizing function calls here
 
 	}
 
@@ -47,11 +25,14 @@ function feedback() {
 	// Create global variables
 	var i = 0,
 	    mouse_pos_x,
-	    mouse_pos_y,
-	    new_comment_open = false;
+	    mouse_pos_y
 
-	// Collect all current comments on page load
-	var $all_comments = $(".comment");
+	// Global settings object 
+	var status = {
+		new_comment_open: false,
+		new_comment_pos_x: 0,
+		new_comment_pos_y: 0
+	}
 
 	// Setup object that contains all individual comments
 	var comments = {};
@@ -60,24 +41,15 @@ function feedback() {
 	var comment = function () {
 		this.config = {
 			index: 0,
+			timestamp: null,
 			position_x: 0,
 			position_y: 0
 		}
 		this.contents = {
-			comment_author: "",
-			comment_copy: ""
+			author: "",
+			copy: ""
 		}
 	}
-
-/*  -----------------------------
-	SETUP FUNCTIONS    
-	-------------------------- */
-
-	// Loop through all comments on page load and add them to the comments object 
-	$all_comments.each(function(){
-		methods.create_comment_obj($(this).find('.comment-copy').text(),$(this).find('.comment-author').text(),false);
-		$(this).attr('data-comment-index',i);
-	});
 
 /*  -----------------------------
 	HELPER FUNCTIONS    
@@ -85,7 +57,10 @@ function feedback() {
 
 
 /*  -----------------------------
-	EVENT HANDLERS   
+	EVENT HANDLERS 
+
+	!!! This whole section needs cleaned up !!! 
+
 	-------------------------- */
 
 	$('#add-comment-btn').click(function(event){
@@ -107,24 +82,40 @@ function feedback() {
 
 	});
 
-	function bind_click_to_body(){
+	function bind_click_to_body() {
 		$('body').bind('click', function(e){
 			mouse_pos_x = e.pageX;
 			mouse_pos_y = e.pageY;
-			if (new_comment_open === false)
+			if (status.new_comment_open === false)
 				methods.open_new_comment_dialog(mouse_pos_x, mouse_pos_y);
+				status.new_comment_pos_x = mouse_pos_x;
+				status.new_comment_pos_y = mouse_pos_y;
 		});
 	}
 
+	function unbind_click_to_body() {
+		
+		$('body').unbind('click');
+	}
+
+
 	$('.add-comment-close').bind('click', function(){
+		
 		methods.close_new_comment_dialog();
+
 	});
 
-	function assign_handlers() { 
+	$('#create-comment-btn').bind('click', function(){
+
+		bind_click_to_body();
+		event.stopPropagation();
+
+	});
+
+	function dynamic_handlers() { 
 
 		$('.comment').on('click', 'a.comment-delete', function(event){
 
-			methods.remove_comment_obj($(this).parent());
 			methods.remove_comment_elem($(this).parent());
 
 			event.preventDefault();
@@ -135,76 +126,78 @@ function feedback() {
 	}
 
 /*  -----------------------------
-	"PUBLIC" METHODS (NOT AVAILABLE OUTSIDE OF FEEDBACK())
+	METHODS (NOT AVAILABLE OUTSIDE OF FEEDBACK())
 	-------------------------- */
 
 	this.methods = {
 
 		create_comment_obj: function(copy, author, create_new_comment) {
 
-			var comment_copy = copy;
-			var comment_author = author;
-
 			// Create a new instance of the comment object 
 			var new_comment = new comment();
 
+			var comment_timestamp = new Date();
+			var comment_copy = copy;
+			var comment_author = author;
+
 			// Add contents to the newly created comment object 
-			new_comment.contents.comment_author = comment_author;
-			new_comment.contents.comment_copy = comment_copy;
 			new_comment.config.index = i;
-			methods.add_comment_obj(new_comment);
+			new_comment.config.timestamp = comment_timestamp;
+			new_comment.config.position_x = status.new_comment_pos_x;
+			new_comment.config.position_y = status.new_comment_pos_y;
+			new_comment.contents.author = comment_author;
+			new_comment.contents.copy = comment_copy;			
 
 			// Increment comment counter 
 			i++;
 
-			// If the comment does not already exist on the page, call function to create the DOM element and add it
-			if (create_new_comment === true) 
-				methods.add_comment_elem(new_comment);
+			methods.add_comment_elem(new_comment);
 
-		},
-
-		add_comment_obj: function(comment_object) {
-			
-			comments[i] = comment_object;
-		
 		},
 
 		remove_comment_elem: function(comment_object) {
 			
+			// Remove selected comment from the comments object
+			var comment_num = comment_object.attr('data-comment-index') - 1;
+			delete comments[comment_num];
+
+			// Remove selected comment from the page 
 			comment_object.remove();
 
 		},
 
 		add_comment_elem: function(comment_object) {
 
+			// Add new comment to the comments object
+			comments[i] = comment_object;
+
 			// Create new jQuery element
 			$new_comment_elem = $('<article class="comment"></article>');
-			$new_comment_elem.append('<p class="comment-copy">' + comment_object.contents.comment_copy + '</p>');
-			$new_comment_elem.append('<footer class="comment-footer"><p>Comment left by: <span class="comment-author">' + comment_object.contents.comment_author + '</span></p></footer>');
+			$new_comment_elem.append('<p class="comment-copy">' + comment_object.contents.copy + '</p>');
+			$new_comment_elem.append('<footer class="comment-footer"><p>Comment left by: <span class="comment-author">' + comment_object.contents.author + '</span> on <span class="comment-timestamp">' + comment_object.config.timestamp + '</span></p></footer>');
 			$new_comment_elem.append('<a href="#" class="comment-delete">Delete comment</a>');
 			$new_comment_elem.attr('data-comment-index',i);
+			$new_comment_elem.css({
+				"position": "absolute",
+				"top": comment_object.config.position_y,
+				"left": comment_object.config.position_x
+			});
 
 			// Add new element to the page 
 			$('.comments-wrapper').append($new_comment_elem);
 
 			// Assign dynamically created comment required event handler(s)
-			assign_handlers();
+			dynamic_handlers();
 
-			// Close the new comment popup (THIS NEEDS TO GO INTO A SEPARATE FUNCTION)
+			// Close the new comment popup 
 			methods.close_new_comment_dialog();
 
 		},
 
-		remove_comment_obj: function(comment_object) {
-
-			var comment_num = comment_object.attr('data-comment-index') - 1;
-			delete comments[comment_num];
-
-		}, 
-
 		close_new_comment_dialog: function() {
 
-			new_comment_open = false;
+			unbind_click_to_body();
+			status.new_comment_open = false;
 			$('.add-comment-form').css({"display": "none"});
 			event.stopPropagation();
 
@@ -212,7 +205,7 @@ function feedback() {
 
 		open_new_comment_dialog: function(pos_x, pos_y) {
 
-			new_comment_open = true;
+			status.new_comment_open = true;
 			$('.add-comment-form').css({
 				"left": pos_x,
 				"top": pos_y,
@@ -227,7 +220,3 @@ function feedback() {
 	init();
 
 }
-
-$(document).ready(function(){
-	feedback();
-});
