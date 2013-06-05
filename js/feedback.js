@@ -6,6 +6,7 @@
 		- Format date string to be more concise
 		- New comment positioning is off 
 		- Reduce unnecessary repetition in comment property variables 
+		- Use object constructor method (http://jsfiddle.net/louisstanard/K2Vrk/)
 
 	--------------------------------------------- */
 
@@ -37,17 +38,17 @@ function feedback() {
 	// Setup object that contains all individual comments
 	var comments = {};
 
-	// Setup object for each individual comment
-	var comment = function () {
+	// Comment object constructor 
+	function comment(author, copy) {
 		this.config = {
-			index: 0,
-			timestamp: null,
+			index: index,
+			timestamp: new Date(),
 			position_x: 0,
 			position_y: 0
 		}
 		this.contents = {
-			author: "",
-			copy: ""
+			author: author,
+			copy: copy
 		}
 	}
 
@@ -131,22 +132,22 @@ function feedback() {
 
 	this.methods = {
 
-		create_comment_obj: function(copy, author, create_new_comment) {
+		create_comment_obj: function(copy, author) {
 
 			// Create a new instance of the comment object 
-			var new_comment = new comment();
+			var new_comment = new comment(author, copy);
 
-			var comment_timestamp = new Date();
-			var comment_copy = copy;
-			var comment_author = author;
+			//var comment_timestamp = new Date();
+			//var comment_copy = copy;
+			//var comment_author = author;
 
 			// Add contents to the newly created comment object 
-			new_comment.config.index = i;
-			new_comment.config.timestamp = comment_timestamp;
+			//new_comment.config.index = i;
+			//new_comment.config.timestamp = comment_timestamp;
 			new_comment.config.position_x = status.new_comment_pos_x;
 			new_comment.config.position_y = status.new_comment_pos_y;
-			new_comment.contents.author = comment_author;
-			new_comment.contents.copy = comment_copy;			
+			//new_comment.contents.author = comment_author;
+			//new_comment.contents.copy = comment_copy;			
 
 			// Increment comment counter 
 			i++;
