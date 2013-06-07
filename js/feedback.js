@@ -1,171 +1,192 @@
-	/* ------------------------------------------------
+/**
+*	
+*	TO DO: FUNCTIONALITY 
+*	--------------------
+*	- Parse JSON data and display existing comments on the page 
+*	- FeedbackWidget.openNewCommentDialog() will not work as a public function without e.pageX/e.pageY
+*	- Add ability to toggle comments on/off 
+*	
+*	TO DO: UI 
+*	---------
+*	- Add marker to specify location of comments
+*	
+**/ 
 
-		TO DO:
-		------
-		- Post a reply / comment chain 
-		- Ability to write multi-line comments (currently outputs 1 string)
-		- Format date string to be more concise
-		- New comment positioning is off 
-		- Reduce unnecessary repetition in comment property variables 
-		- Use object constructor method (http://jsfiddle.net/louisstanard/K2Vrk/)
-		- Separate behavior from presentation 
-		- The comment element on the page and the comment instance need to be tied together more closely 
-		- Padding on element causing it to not line up correctly 
+(function(window, $, FeedbackWidget) {
 
-	--------------------------------------------- */
-
-function feedback() {
-   
-	// Create global variables
 	var i = 0,
-	    mouse_pos_x,
-	    mouse_pos_y,
+		mousePosX,
+		mousePosY,
+		comments = {},
 
-		// Global status object 
-	    status = {
-			newCommentOpen: false,
-			new_comment_pos_x: 0,
-			new_comment_pos_y: 0
-		},
+		// Private settings object 
+		settings = {
+			// UI elements 
+			commentWrapper: $('#js-comments-wrapper'),
+			commentClass: $('.comment'),
+			createNewCommentBtn: $('#js-create-comment-btn'),
+			addNewCommentForm: $('#js-add-comment-form'),
+			addNewCommentClose: $('#js-add-comment-close'),
+			addNewCommentInputAuthor: $('#js-add-comment-author'),
+			addNewCommentInputCopy: $('#js-add-comment-copy'),
+			addNewCommentBtn: $('#js-add-comment-btn'), 
+			deleteCommentBtn: $('.comment-delete'),
 
-		// Array that contains all individual comments
-	    comments = [];
-
-	// Comment object constructor 
-	function comment(index, copy, author) {
-		this.index = index;
-		this.position_x = 0;
-		this.position_y = 0;
-		this.contents = {
-			author: author,
-			copy: copy,
-			timestamp: new Date()
-		}
-	}
-
-
-	// OPEN/CLOSE CREATE NEW COMMENT DIALOG BOX
-
-	$('#js-create-comment-btn').bind('click', function(){
-		bindCreateCommentBox();
-		event.stopPropagation();
-	});
-
-	$('#js-add-comment-close').bind('click', function(){
-		methods.closeNewCommentDialog();
-		event.stopPropagation();
-	});
-
-	function bindCreateCommentBox() {
-		$('body').bind('click', function(e){
-			mouse_pos_x = e.pageX;
-			mouse_pos_y = e.pageY;
-			if (status.newCommentOpen === false)
-				methods.openNewCommentDialog(mouse_pos_x, mouse_pos_y);
-		});
-	}
-
-	function unbindCreateCommentBox() {
-		$('body').unbind('click');
-	}
-
-	// CREATE NEW COMMENT DIALOG BOX EVENTS
-
-	$('#js-add-comment-btn').bind('click', function(event){
-		// Get new comment values
-		var newCommentAuthor = $('#js-add-comment-author').val();
-		var newCommentCopy = $('#js-add-comment-copy').val();
-		// Create new comment object if form fields are not empty 
-		if (newCommentAuthor !== '' && newCommentCopy !== '') 
-			methods.createNewCommentInstance(newCommentCopy, newCommentAuthor);
-		else 
-			alert("Please fill out all form fields.");
-		// Clear form fields
-		$('#js-add-comment-author, #js-add-comment-copy').val('');
-		// Stop default link behavior 
-		event.preventDefault();
-	});
-
-	function enableDeleteComment() {
-		$('.comment').on('click', 'a.comment-delete', function(event){
-			methods.deleteCommentElement($(this).parent());
-			// Stop default link behavior and event propagation
-			event.preventDefault();
-			event.stopPropagation();
-		});
-	}
-
-
-	// COMMENT ACTIONS 
-
-	this.methods = {
-
-		createNewCommentInstance: function(newCommentCopy, newCommentAuthor) {
-			// Create a new instance of the comment object 
-			var newComment = new comment(i, newCommentCopy, newCommentAuthor);
-			    newComment.position_x = status.new_comment_pos_x;
-			    newComment.position_y = status.new_comment_pos_y;
-			// Increment comment counter 
-			i++;
-			// Call function to add new comment instance to the page 
-			methods.addCommentElement(newComment);
-		},
-
-		addCommentElement: function(newComment) {
-			// Add new comment to the comments object
-			// Should the array be mapped? 
-			comments[i] = newComment;
-			// Or a regular array? 
-			// comments.push(newComment);
-			// Create new jQuery element
-			$newCommentElement = $('<article class="comment"></article>');
-			$newCommentElement.append('<p class="comment-copy">' + newComment.contents.copy + '</p>');
-			$newCommentElement.append('<footer class="comment-footer"><p>Comment left by: <span class="comment-author">' + newComment.contents.author + '</span> on <span class="comment-timestamp">' + newComment.contents.timestamp + '</span></p></footer>');
-			$newCommentElement.append('<a href="#" class="comment-delete">Delete comment</a>');
-			$newCommentElement.attr('data-comment-index', newComment.index);
-			$newCommentElement.css({
-				'position': 'absolute',
-				'top': newComment.position_y,
-				'left': newComment.position_x
-			});
-			// Add new element to the page 
-			$('#js-comments-wrapper').append($newCommentElement);
-			// Assign dynamically created comment required event handler(s)
-			enableDeleteComment();
-			// Close the new comment popup 
-			methods.closeNewCommentDialog();
-
-			console.log(comments);
-		},
-
-		deleteCommentElement: function(comment_object) {
-			// Remove selected comment from the comments object
-			var commentIndex = comment_object.attr('data-comment-index') + 1;
-			console.log(commentIndex);
-			delete comments[commentIndex];
-			// Remove selected comment from the page 
-			comment_object.remove();
-
-			console.log(comments);
-		},
-
-		closeNewCommentDialog: function() {
-			unbindCreateCommentBox();
-			status.newCommentOpen = false;
-			$('.add-comment-form').css({"display": "none"});
+			// Status object 
+			status: {
+				newCommentDialogOpen: false,
+				newCommentPosX: 0,
+				newCommentPosY: 0
+			}
 		}, 
 
-		openNewCommentDialog: function(pos_x, pos_y) {
-			status.newCommentOpen = true;
-			$('#js-add-comment-form').css({
-				"left": pos_x,
-				"top": pos_y,
-				"display": "block"
-			});
-			status.new_comment_pos_x = pos_x;
-			status.new_comment_pos_y = pos_y;
-		}
+		// Initialize all internal functions 
+		init = function() {
+			bindStaticUIActions();
+		}, 
 
+		// Bind initial UI actions on page load
+		bindStaticUIActions = function() {
+			settings.createNewCommentBtn.bind('click', function(){
+				bindDynamicUIActions.bindCreateCommentAction();
+				event.stopPropagation();
+				event.preventDefault();
+			});
+			settings.addNewCommentClose.bind('click', function(){
+				FeedbackWidget.closeNewCommentDialog();
+				event.stopPropagation();
+				event.preventDefault();
+			});
+			settings.addNewCommentBtn.bind('click', function(){
+				// Get new comment values
+				var newCommentAuthor = settings.addNewCommentInputAuthor.val(); 
+				var newCommentCopy = settings.addNewCommentInputCopy.val();
+				// Create new comment if form fields are not empty 
+				if (newCommentAuthor !== '' && newCommentCopy !== '') {
+					FeedbackWidget.createNewComment(newCommentAuthor, newCommentCopy);
+					// Clear inputs 
+					settings.addNewCommentInputAuthor.val('')
+					settings.addNewCommentInputCopy.val('');
+				} else {
+					alert('Please fill in all form fields.');
+				}
+				event.stopPropagation();
+			});
+		}, 
+
+		// Bind dynamically created handlers as needed 
+		bindDynamicUIActions = {
+			bindCreateCommentAction: function() {
+				$('body').bind('click', function(e) {
+					if (settings.status.newCommentDialogOpen === false)
+						FeedbackWidget.openNewCommentDialog(e);
+				});
+			}, 
+			unbindCreateCommentAction: function() {
+				$('body').unbind('click');
+			},
+			enableDeleteComment: function() {
+				console.log("hit!");
+				settings.deleteCommentBtn.bind('click', function(){
+					console.log("hit");					
+					event.stopPropagation();
+					event.preventDefault();
+				});
+			}
+		}, 
+
+		// Comment object constructor 
+		comment = function(index, author, copy) {
+			this.index = index;
+			this.domElement = null;
+			this.position = {
+				x: 0,
+				y: 0
+			};
+			this.contents = {
+				author: author, 
+				copy: copy, 
+				timestamp: new Date()
+			}
+			this.deleteComment = function() {
+				console.log(this.domElement);
+			}
+		}, 
+
+		// Build the element and return as a jQuery object
+		createCommentElement = function(newCommentElement) {
+			var $newCommentElement = $('<article class="comment"></article>');
+				$newCommentElement.append('<p class="comment-copy">' + newCommentElement.contents.copy + '</p>');
+				$newCommentElement.append('<footer class="comment-footer"><p>Comment left by: <span class="comment-author">' + newCommentElement.contents.author + '</span> on <span class="comment-timestamp">' + newCommentElement.contents.timestamp + '</span></p></footer>');
+				$newCommentElement.append('<a href="#" class="comment-delete">Delete comment</a> | <a href="#" class="comment-reply">Reply</a>');
+				$newCommentElement.attr('data-comment-index', newCommentElement.index);
+				$newCommentElement.css({
+					'position': 'absolute',
+					'top': newCommentElement.position.y,
+					'left': newCommentElement.position.x
+				});
+
+			return $newCommentElement;
+		};
+
+	// Public function: open the create new comment dialog
+	FeedbackWidget.openNewCommentDialog = function(e) {
+		if (e.pageX) settings.status.newCommentPosX = e.pageX;
+		if (e.pageY) settings.status.newCommentPosY = e.pageY;
+		settings.status.newCommentDialogOpen = true;
+		settings.addNewCommentForm.css({
+			'display': 'block',
+			'top': settings.status.newCommentPosY, 
+			'left': settings.status.newCommentPosX
+		});
 	}
 
-}
+	// Public function: close the create new comment dialog
+	FeedbackWidget.closeNewCommentDialog = function() {
+		settings.status.newCommentDialogOpen = false;
+		settings.addNewCommentForm.hide();
+		bindDynamicUIActions.unbindCreateCommentAction();
+	}
+
+	/**
+	*
+	* Public function: create a new comment  
+	* 
+	* Passing in any information to the function FeedbackWidget.createNewComment() should
+	* create the new comment, add it to the comments array and append it to the DOM
+	*
+	* Should the properties of the newComment object be passed to the object contructor
+	* or should they be set within the createNewComment function? 
+	* 
+	**/
+	FeedbackWidget.createNewComment = function(author, copy) {
+		// Create a new instance of the object "comment" and set position 
+		var newComment = new comment(i, author, copy);
+			newComment.position.x = settings.status.newCommentPosX;
+			newComment.position.y = settings.status.newCommentPosY;
+
+		// Call function to build the element and return as a jQuery object 
+		var $newCommentElement = createCommentElement(newComment);
+
+		// Set the jQuery object as a property of the comment object for reference 
+		newComment.domElement = $newCommentElement;
+
+		// Append newly created element to the comments wrapper 
+		settings.commentWrapper.append($newCommentElement);
+
+		// Add object to the comments wrapper object 
+		comments[i] = newComment;
+
+		// Close the create new comment dialog box
+		FeedbackWidget.closeNewCommentDialog();
+
+		bindDynamicUIActions.enableDeleteComment();
+
+		i++;
+
+		console.log(comments);
+	}
+
+	init();
+
+}(window, jQuery, window.FeedbackWidget = window.FeedbackWidget || {}));
