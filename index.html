@@ -15,16 +15,16 @@
   </head>
   <body>
   	
-    <div class="comments-wrapper">
+    <div id="js-comments-wrapper" class="comments-wrapper">
 
-      <a href="#" id="create-comment-btn">Add a comment</a>
+      <a href="#" class="btn" id="js-create-comment-btn">Add a new comment</a>
 
-      <form class="add-comment-form" style="display:none;">
-        <a href="#" class="add-comment-close">[X]</a>
+      <form id="js-add-comment-form" class="add-comment-form" style="display:none;">
+        <a href="#" id="js-add-comment-close">[X]</a>
         <p><strong>Add a new comment</strong></p>
-        <input type="text" id="add-comment-author">
-        <textarea id="add-comment-copy"></textarea>
-        <a href="#" id="add-comment-btn">Add comment</a>
+        <input type="text" id="js-add-comment-author">
+        <textarea id="js-add-comment-copy"></textarea>
+        <a href="#" class="btn" id="js-add-comment-btn">Post</a>
       </form>
 
     </div>
