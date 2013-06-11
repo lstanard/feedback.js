@@ -4,30 +4,46 @@
 	box-sizing: border-box; 
 }
 
+body {
+	text-align: center;
+	padding: 50px 0 0 0;
+}
+
+.dashboard-controls {
+	background: #000;
+	height: 50px;
+	margin: -50px 0 0 0;
+	position:  fixed;
+	width: 100%;
+	z-index:  1000;
+}
+
 .btn {
+	float: left;
 	display:  block;
 	background:  blue;
 	color: #FFF;
 	font-size:  14px;
 	text-decoration:  none;
-	width: 160px;
+	width: 180px;
 	height: 32px;
 	padding: 6px 0 0 0;
 	text-align:  center;
-	margin: 20px;
+	margin: 10px 10px 0 10px;
 }
 
 .add-comment-form {
 	background:  #dedede;
 	padding: 20px;
+	margin: 0;
 	width: 300px;
 
 	position:  absolute;
 	z-index:  200;
 }
 
-.add-comment-form input, 
-.add-comment-form textarea {
+input, 
+textarea {
 	margin: 0 0 20px 0;
 	width: 260px;
 }
@@ -37,21 +53,27 @@
 }
 
 .comments-wrapper {
+	/*background: url(../img/example.jpeg) no-repeat 0px 0px;*/
 	position: absolute;
 	width: 100%;
 	height: 100%;
 	min-height:  100%;
 	z-index:  100;
+	text-align:  left;
+	top: 0;
 }
 
 .comment {
+	box-shadow: 2px 2px 7px 1px rgba(0,0,0,.4);
 	float: left;
 	background: #efefef;
 	padding: 20px;
-	margin: 20px;
+	margin: 0;
 	width: 300px;
+}
 
-	/* position:  absolute; */
+#js-add-comment-btn {
+	margin: 0;
 }
 
 .comment-footer {
@@ -60,4 +82,14 @@
 
 .comment-delete {
 	font-size: .75rem;
+}
+
+.comment-reply {
+	border-top: 2px solid #ccc;
+	margin: 20px 0 0 0;
+	padding: 10px 0 0 0;
+}
+
+.image-holder {
+	margin: 0 auto;
 }

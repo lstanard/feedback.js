@@ -5,24 +5,34 @@
     <title>feedback.js</title>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/ui-lightness/jquery-ui-1.10.3.custom.min.css">
   </head>
   <body>
 
-    <div id="js-comments-wrapper" class="comments-wrapper">      
-
+    <div id="js-dashboard-controls" class="dashboard-controls">
       <a href="#" class="btn" id="js-create-comment-btn">Add a new comment</a>
+      <a href="#" class="btn" id="js-toggle-comments-btn">Toggle comments on/off</a>
+    </div>
+
+    <div id="js-comments-wrapper" class="comments-wrapper">      
 
       <form id="js-add-comment-form" class="add-comment-form" style="display:none;">
         <a href="#" id="js-add-comment-close">[X]</a>
         <p><strong>Add a new comment</strong></p>
-        <input type="text" id="js-add-comment-author">
-        <textarea id="js-add-comment-copy"></textarea>
+        <input type="text" id="js-add-comment-author" value="Name">
+        <textarea id="js-add-comment-copy" value="Comment"></textarea>
         <a href="#" class="btn" id="js-add-comment-btn">Post</a>
       </form>
 
     </div>
 
+    <div id="js-content-wrapper" class="image-holder">
+      <!--<img src="img/example.jpeg" alt=" ">-->
+    </div>
+
     <script src="js/libs/jquery-1.10.1.min.js"></script>
+    <script src="js/libs/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="js/json/comment-data.js"></script>
     <script src="js/feedback.js"></script>
     
   </body>
